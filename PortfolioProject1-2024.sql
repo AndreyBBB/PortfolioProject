@@ -1,9 +1,8 @@
--- Initially we just separate original data into 2 files (to demonstrate all the skills of working with data?)
+-- Initially we just separate original data into 2 files (to demonstrate all the skills of working with joins)
 -- In 2024 I just renewed both files adding '2024' to their names
--- Seems, like in 2024 the data contains only 1 row for a week. CHECK once more.
 
 --SELECT *
---FROM PortfolioProject..CovidVaccinations
+--FROM PortfolioProject..CovidVaccinations2024
 --ORDER BY 3,4
 
 --SELECT *
@@ -12,14 +11,14 @@
 --ORDER BY 3,4
 
 
--- Select Data that we are going to be using
+-- Select Data that we are going to use
 
 SELECT Location, date, total_cases, new_cases, total_deaths, population
 FROM PortfolioProject..CovidDeaths2024
---WHERE continent IS NOT NULL -- deleting all data without specific country (like Asia or World)
+--WHERE continent IS NOT NULL -- selecting all data without specific country (like Asia or World) Probably we can just delelete it for the purposes of that project ?
 ORDER BY 1,2
 
--- Changing dataype of NEEDED numeric data to float or bigint (only 1 column can be altered in one statement)
+-- Changing dataype (if accepted) of NEEDED numeric data to float or bigint (only 1 column can be altered in one statement)
 -- Another way to cope with datatype (without changing it in the original database) is to use 'cast(total_deaths as float)' in SELECT statement
 -- We can not use 'integer' type because it has limit of 2 147 483 647 while some numbers are higher
 
@@ -89,6 +88,7 @@ ORDER BY 1
 
 ALTER TABLE PortfolioProject..CovidVaccinations2024
 ALTER COLUMN new_vaccinations float
+
 -- another way - CONVERT(float,vac.new_vaccinations) - in SELECT statement
 -- another way - CAST(vac.new_vaccinations as float) - in SELECT statement
 -- CAST is used more often and is similar to other programming languages
