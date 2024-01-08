@@ -14,11 +14,15 @@ FROM PortfolioProject..NashvilleHousing
 ALTER TABLE PortfolioProject..NashvilleHousing
 ALTER COLUMN SaleDate date
 -- We can add another column and CONVERT + copy date to it if we have to save the original column
-
+-- Or we can update the table:
+-- Update NashvilleHousing
+-- SET SaleDate = CONVERT(Date, SaleDate)
+-- The difference is that ALTER changes the table structure, while UPDATE only changes data
+-- I can't see the difference in my case, so I use ALTER
 
 -- Populate property address data
 
--- 1 - Cheching for NULL values
+-- 1 - Checking for NULL values
 SELECT PropertyAddress
 FROM PortfolioProject..NashvilleHousing
 WHERE PropertyAddress IS NULL
@@ -29,12 +33,12 @@ FROM PortfolioProject..NashvilleHousing
 WHERE PropertyAddress IS NULL
 
 -- 3 - Checking if there is an Address in a table with the same ParcellID
--- Joining a table to its copy
+-- Joining a table to its copy (Self Join)
 SELECT a.ParcelID, a.PropertyAddress, b.ParcelID, b.PropertyAddress
 FROM PortfolioProject..NashvilleHousing AS a
 JOIN PortfolioProject..NashvilleHousing AS b
 	ON a.ParcelID = b.ParcelID
-	AND a.[UniqueID ] <> b.[UniqueID ]
+	AND a.[UniqueID ] <> b.[UniqueID ] -- !!! THE MOST IMPORTANT PART !!!
 WHERE a.PropertyAddress IS NULL
 
 -- Populating NULL values, copying Address from the same ParcelID
@@ -81,9 +85,9 @@ SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddres
 SELECT *
 FROM PortfolioProject..NashvilleHousing
 
--- 2 - PropertyAddress (now Address+City)
+-- 2 - OwnerAddress (initially Address+City+State)
 -- Using PARSENAME (It's actually looks like a cheat!)
--- Returns parts of the object's name, divider by '.' (Using REPLACE for that)
+-- Returns parts of the object's name, divided by '.' starting from the last one (Using REPLACE to change ',' to '.')
 -- Be careful - can return up to 4 parts, each up to 128 characters, datatype = sysname (equivalent to nvarchar(128)
 -- Any part longer than 128 characters returns NULL. NULL (or nonexisting part) returns NULL.
 
@@ -99,7 +103,7 @@ SELECT PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1) AS OwnerSplitState
 FROM PortfolioProject..NashvilleHousing
 
 -- Adding 3 new columns - OwnerSplitState, OwnerSplitCity, OwnerSplitAddress
--- Somehow it works only executing 1 by 1, not all at once
+-- Execute 1 by 1, not all at once
 
 ALTER TABLE NashvilleHousing
 ADD OwnerSplitState nvarchar(255)
@@ -138,7 +142,7 @@ SELECT SoldAsVacant
 	   END
 FROM PortfolioProject..NashvilleHousing
 
--- After checkink that it works, changing the column
+-- After checking that it works, changing the column
 
 UPDATE NashvilleHousing
 SET SoldAsVacant = 
