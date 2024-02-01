@@ -1,6 +1,11 @@
--- Cleaning data project
+-- Project: Housing data cleaning
+-- Data source: https://github.com/AlexTheAnalyst/PortfolioProjects/blob/main/Nashville%20Housing%20Data%20for%20Data%20Cleaning.xlsx
 -- Thanks to Alex The Analyst
--- Database https://github.com/AlexTheAnalyst/PortfolioProjects/blob/main/Nashville%20Housing%20Data%20for%20Data%20Cleaning.xlsx
+
+-- Skills used: Joins, SUBSTRING, PARSENAME, CTE's, Window Functions, Aggregate Functions, Converting Data Types
+
+
+-- The first look at the data
 
 SELECT *
 FROM PortfolioProject..NashvilleHousing
@@ -20,6 +25,7 @@ ALTER COLUMN SaleDate date
 -- The difference is that ALTER changes the table structure, while UPDATE only changes data
 -- I can't see the difference in my case, so I use ALTER
 
+	
 -- Populate property address data
 
 -- 1 - Checking for NULL values
@@ -151,12 +157,12 @@ SET SoldAsVacant =
 	   ELSE SoldAsVacant
 	   END
 
-SELECT DISTINCT(SoldAsVacant) --checking for consistency - everithing is OK now
+SELECT DISTINCT(SoldAsVacant) --checking for consistency - everything is OK now
 FROM PortfolioProject..NashvilleHousing
 
 
 -- Removing duplicates using CTE
--- WARNING! - usually we have to save the original data, so check it twice!
+-- WARNING! We usually have to save the original data, so check it twice!
 
 WITH RowNumCTE AS(
 SELECT *,
@@ -176,7 +182,7 @@ FROM RowNumCTE
 WHERE row_num > 1
 ORDER BY PropertyAddress
 
--- It shows, we have 104 duplicated rows (at least with duplicated fields we asked about)
+-- It shows we have 104 duplicated rows (at least with duplicated fields we asked about)
 
 -- Now we can actually DELETE these duplicates
 
@@ -197,12 +203,12 @@ DELETE
 FROM RowNumCTE
 WHERE row_num > 1
 
--- It shows 104 rows were affected, now we can go back and check once more for duplicates - there are none
+-- It shows 104 rows were affected. Now we can go back and check once more for duplicates - there are none
 
 
 -- Deleting unnecessary columns
--- WARNING! Once again - check it twice, before deleting!
--- Usually it's acceptable for creating views or working with copies of data, not the raw data!
+-- WARNING! Once again - check twice before deleting it!
+-- Usually, it's acceptable for creating views or working with copies of data, not the raw data!
 
 SELECT *
 FROM PortfolioProject..NashvilleHousing
@@ -210,14 +216,14 @@ FROM PortfolioProject..NashvilleHousing
 --ALTER TABLE PortfolioProject..NashvilleHousing
 --DROP COLUMN PropertyAddress, OwnerAddress
 
---I will not do it right now, but it's safe to delete addresses, which we splitted in new columns
+--I will not do it right now, but it's safe to delete addresses, which we split in new columns
 --Maybe there is more to delete depending on the goals of the analysis
 
 
 -- RESUME of data cleaning
 -- 1. SaleData format changed
 -- 2. NULL values in PropertyAddress column - checked and populated
--- 3. PropertyAddress and OwnerAddress - splitted into new columns (Address, City, State)
+-- 3. PropertyAddress and OwnerAddress - split into new columns (Address, City, State)
 -- 4. Inconsistency in SoldAsVacant column (Y, N, Yes, No) - fixed
 -- 5. Duplicate rows - checked and deleted
 -- 6. Unnecessary columns - prepared to delete
