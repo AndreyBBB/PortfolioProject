@@ -1,5 +1,7 @@
 -- Project: Covid-19 data exploration
 -- Data source: https://ourworldindata.org/covid-deaths
+-- Thanks to Alex The Analyst
+
 -- Skills used: Joins, CTE's, Temp Tables, Window Functions, Aggregate Functions, Creating Views, Converting Data Types
 
 
