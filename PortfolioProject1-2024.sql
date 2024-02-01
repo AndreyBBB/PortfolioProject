@@ -1,21 +1,25 @@
--- Initially we just separate original data into 2 files (to demonstrate all the skills of working with joins)
--- In 2024 I just renewed both files adding '2024' to their names
+-- Project: Covid-19 data exploration
+-- Data source: https://ourworldindata.org/covid-deaths
+-- Skills used: Joins, CTE's, Temp Tables, Window Functions, Aggregate Functions, Creating Views, Converting Data Types
 
---SELECT *
---FROM PortfolioProject..CovidVaccinations2024
---ORDER BY 3,4
 
---SELECT *
---FROM PortfolioProject..CovidDeaths2024
---WHERE continent IS NULL
---ORDER BY 3,4
+-- The first look at the data
+
+SELECT *
+FROM PortfolioProject..CovidVaccinations2024
+ORDER BY 3,4
+
+SELECT *
+FROM PortfolioProject..CovidDeaths2024
+WHERE continent IS NULL
+ORDER BY 3,4
 
 
 -- Select Data that we are going to use
 
 SELECT Location, date, total_cases, new_cases, total_deaths, population
 FROM PortfolioProject..CovidDeaths2024
---WHERE continent IS NOT NULL -- selecting all data without specific country (like Asia or World) Probably we can just delelete it for the purposes of that project ?
+WHERE continent IS NOT NULL -- selecting all data without specific country (like Asia or World). Probably, we can just delete it for the purposes of that project.
 ORDER BY 1,2
 
 -- Changing dataype (if accepted) of NEEDED numeric data to float or bigint (only 1 column can be altered in one statement)
@@ -29,7 +33,7 @@ ALTER TABLE PortfolioProject..CovidDeaths2024
 ALTER COLUMN total_cases float
 
 -- Looking at Total Cases vs Total Deaths 
--- It's like what are the chances to die if you got the covid (in Argentina)
+-- It's like, what are the chances of dying if you got the covid (in Argentina)
 
 SELECT Location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 AS DeathPercentage
 FROM PortfolioProject..CovidDeaths2024
@@ -43,7 +47,7 @@ FROM PortfolioProject..CovidDeaths2024
 --WHERE Location = 'Argentina'
 ORDER BY 1,2
 
--- Looking at the countries with the highest ifection rate compared to population
+-- Looking at the countries with the highest infection rate compared to the population
 
 SELECT Location, population, MAX(total_cases) AS HighestInfectionCount, MAX((total_cases/population)*100) AS InfectionRate
 FROM PortfolioProject..CovidDeaths2024
@@ -64,7 +68,7 @@ ORDER BY TotalDeathCount DESC
 
 -- Breaking down the DeathCount by continent
 -- When we SELECT continent and NOT NULL, it somehow returns different numbers, where NA=USA, which is NOT correct.
--- Now the data contains some "non-geographical" division in continent column - by income, 
+-- Now the data contains some "non-geographical" division in the continent column - by income, 
 -- it duplicates total numbers and sometimes makes things more difficult
 
 SELECT location, MAX(total_deaths) AS TotalDeathCount
@@ -95,6 +99,7 @@ ALTER COLUMN new_vaccinations float
 -- only ALTER COLUMN permanently changes datatype in a database,
 -- others only change the interpretation of data in a query
 
+	
 -- Variant 1 (Join + Partition)
 
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
@@ -154,7 +159,7 @@ FROM #PercentagePopulationVaccinated
 ORDER BY 2,3
 
 
--- Creating view to store data for later viz
+-- Creating a view to store data for later viz
 
 CREATE VIEW PercentPopVaccinatedView AS
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
